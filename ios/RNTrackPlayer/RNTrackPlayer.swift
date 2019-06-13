@@ -17,6 +17,7 @@ public class RNTrackPlayer: RCTEventEmitter {
     private lazy var player: QueuedAudioPlayer = {
         let player = QueuedAudioPlayer()
         player.bufferDuration = 1
+        player.timeEventFrequency = TimeEventFrequency.everySecond
         return player
     }()
     
@@ -47,7 +48,7 @@ public class RNTrackPlayer: RCTEventEmitter {
             "TRACK_PLAYBACK_ENDED_REASON_NEXT": PlaybackEndedReason.skippedToNext.rawValue,
             "TRACK_PLAYBACK_ENDED_REASON_PREVIOUS": PlaybackEndedReason.skippedToPrevious.rawValue,
             "TRACK_PLAYBACK_ENDED_REASON_STOPPED": PlaybackEndedReason.playerStopped.rawValue,
-            
+
             "PITCH_ALGORITHM_LINEAR": PitchAlgorithm.linear.rawValue,
             "PITCH_ALGORITHM_MUSIC": PitchAlgorithm.music.rawValue,
             "PITCH_ALGORITHM_VOICE": PitchAlgorithm.voice.rawValue,
@@ -74,7 +75,8 @@ public class RNTrackPlayer: RCTEventEmitter {
             "playback-state",
             "playback-error",
             "playback-track-changed",
-            
+            "playback-progress",
+
             "remote-stop",
             "remote-pause",
             "remote-play",
@@ -126,6 +128,10 @@ public class RNTrackPlayer: RCTEventEmitter {
         
         player.event.fail.addListener(self) { [weak self] error in
             self?.sendEvent(withName: "playback-error", body: ["error": error?.localizedDescription])
+        }
+
+        player.event.secondElapse.addListener(self) { [weak self] progress in
+            self?.sendEvent(withName: "playback-progress", body: ["progress": progress])
         }
         
         player.event.playbackEnd.addListener(self) { [weak self] reason in
