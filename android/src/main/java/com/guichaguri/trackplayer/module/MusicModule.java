@@ -6,10 +6,10 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.media.RatingCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import com.facebook.react.bridge.*;
 import com.google.android.exoplayer2.C;
 import com.guichaguri.trackplayer.service.MusicBinder;
@@ -70,8 +70,8 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
         connecting = false;
 
         // Reapply options that user set before with updateOptions
-        if (this.options != null) {
-            binder.updateOptions(this.options);
+        if (options != null) {
+            binder.updateOptions(options);
         }
 
         // Triggers all callbacks
@@ -133,10 +133,12 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
         // States
         constants.put("STATE_NONE", PlaybackStateCompat.STATE_NONE);
+        constants.put("STATE_READY", PlaybackStateCompat.STATE_PAUSED);
         constants.put("STATE_PLAYING", PlaybackStateCompat.STATE_PLAYING);
         constants.put("STATE_PAUSED", PlaybackStateCompat.STATE_PAUSED);
         constants.put("STATE_STOPPED", PlaybackStateCompat.STATE_STOPPED);
         constants.put("STATE_BUFFERING", PlaybackStateCompat.STATE_BUFFERING);
+        constants.put("STATE_CONNECTING", PlaybackStateCompat.STATE_CONNECTING);
 
         // Rating Types
         constants.put("RATING_HEART", RatingCompat.RATING_HEART);
@@ -174,10 +176,8 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
     @ReactMethod
     public void updateOptions(ReadableMap data, final Promise callback) {
-        final Bundle options = Arguments.toBundle(data);
-
         // keep options as we may need them for correct MetadataManager reinitialization later
-        this.options = options;
+        options = Arguments.toBundle(data);
 
         waitForConnection(() -> {
             binder.updateOptions(options);
