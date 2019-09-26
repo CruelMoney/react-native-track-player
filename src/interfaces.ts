@@ -117,6 +117,7 @@ export enum Event {
   PlaybackError = 'playback-error',
   PlaybackQueueEnded = 'playback-queue-ended',
   PlaybackTrackChanged = 'playback-track-changed',
+  PlaybackProgress = 'playback-progress',
   RemotePlay = 'remote-play',
   RemotePlayId = 'remote-play-id',
   RemotePlaySearch = 'remote-play-search',
