@@ -10,7 +10,7 @@ import Foundation
 import MediaPlayer
 import AVFoundation
 
-class Track: NSObject, AudioItem, TimePitching, AssetOptionsProviding {
+class Track: NSObject, AudioItem, InitialTiming, TimePitching, AssetOptionsProviding {
     let id: String
     let url: MediaURL
     
@@ -23,8 +23,10 @@ class Track: NSObject, AudioItem, TimePitching, AssetOptionsProviding {
     var duration: Double?
     var skipped: Bool = false
     var artworkURL: MediaURL?
+    var initialTime: TimeInterval = 0.0
     let headers: [String: Any]?
     let pitchAlgorithm: String?
+    
     
     @objc var album: String?
     @objc var artwork: MPMediaItemArtwork?
@@ -50,6 +52,13 @@ class Track: NSObject, AudioItem, TimePitching, AssetOptionsProviding {
         self.duration = dictionary["duration"] as? Double
         self.headers = dictionary["headers"] as? [String: Any]
         self.artworkURL = MediaURL(object: dictionary["artwork"])
+
+        let initialTime = dictionary["initialTime"] as? Double
+        if let x = initialTime {
+            self.initialTime = x
+        }
+
+
         self.pitchAlgorithm = dictionary["pitchAlgorithm"] as? String
         
         self.originalObject = dictionary
@@ -110,6 +119,11 @@ class Track: NSObject, AudioItem, TimePitching, AssetOptionsProviding {
         }
         
         handler(nil)
+    }
+
+
+    func getInitialTime() -> TimeInterval {
+        return initialTime
     }
 
     // MARK: - TimePitching Protocol
