@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import android.os.*;
 
 /**
  * @author Guichaguri
@@ -41,6 +42,7 @@ public abstract class ExoPlayback<T extends Player> implements EventListener, Me
     protected int previousState = PlaybackStateCompat.STATE_NONE;
     protected float volumeMultiplier = 1.0F;
 
+
     public ExoPlayback(Context context, MusicManager manager, T player) {
         this.context = context;
         this.manager = manager;
@@ -52,6 +54,7 @@ public abstract class ExoPlayback<T extends Player> implements EventListener, Me
 
     public void initialize() {
         player.addListener(this);
+        progressUpdater();
     }
 
     public List<Track> getQueue() {
@@ -227,6 +230,18 @@ public abstract class ExoPlayback<T extends Player> implements EventListener, Me
 
     public void destroy() {
         player.release();
+    }
+
+    private void progressUpdater(){
+        final Handler handler = new Handler();
+        final Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                manager.onProgress(player.getCurrentPosition());
+                handler.postDelayed(this, 1000);
+            }
+        };
+        handler.postDelayed(runnable, 0);
     }
 
     @Override

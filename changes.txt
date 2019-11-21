@@ -1,0 +1,5 @@
+implemented play from position on ios only
+https://github.com/react-native-kit/react-native-track-player/pull/713
+
+
+Implemented an onProgess event for listening in background 

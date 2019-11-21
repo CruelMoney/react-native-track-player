@@ -198,6 +198,14 @@ public class MusicManager implements OnAudioFocusChangeListener {
         metadata.updatePlayback(playback);
     }
 
+    public void onProgress(long progress) {
+        Log.d(Utils.LOG, "onProgress");
+
+        Bundle bundle = new Bundle();
+        bundle.putDouble("progress", Utils.toSeconds(progress));
+        service.emit(MusicEvents.PLAYBACK_PROGRESS, bundle);
+    }
+
     public void onTrackUpdate(Track previous, long prevPos, Track next) {
         Log.d(Utils.LOG, "onTrackUpdate");
 
